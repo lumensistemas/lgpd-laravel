@@ -1,0 +1,60 @@
+<?php
+
+return [
+
+    'data_sensitivity' => [
+        'public' => 'Público',
+        'public_description' => 'Dados publicamente disponíveis que não exigem proteção especial.',
+        'internal' => 'Interno',
+        'internal_description' => 'Dados destinados apenas ao uso interno, não classificados como dados pessoais.',
+        'personal' => 'Pessoal',
+        'personal_description' => 'Dados que identificam ou podem identificar uma pessoa natural.',
+        'sensitive' => 'Sensível',
+        'sensitive_description' => 'Dados sobre origem racial ou étnica, convicção religiosa, opinião política, filiação sindical, saúde, vida sexual, dados genéticos ou biométricos.',
+    ],
+
+    'legal_basis' => [
+        'consent' => 'Consentimento',
+        'consent_description' => 'Tratamento baseado no consentimento livre, informado e inequívoco do titular dos dados (Art. 7, I).',
+        'legal_obligation' => 'Obrigação Legal',
+        'legal_obligation_description' => 'Tratamento necessário para o cumprimento de obrigação legal ou regulatória (Art. 7, II).',
+        'public_administration' => 'Administração Pública',
+        'public_administration_description' => 'Tratamento pela administração pública para a execução de políticas públicas (Art. 7, III).',
+        'research' => 'Pesquisa',
+        'research_description' => 'Tratamento para a realização de estudos por órgãos de pesquisa, garantindo a anonimização sempre que possível (Art. 7, IV).',
+        'contract' => 'Contrato',
+        'contract_description' => 'Tratamento necessário para a execução de contrato ou de procedimentos preliminares relacionados a contrato (Art. 7, V).',
+        'legal_proceedings' => 'Processo Judicial',
+        'legal_proceedings_description' => 'Tratamento para o exercício regular de direitos em processo judicial, administrativo ou arbitral (Art. 7, VI).',
+        'life_protection' => 'Proteção da Vida',
+        'life_protection_description' => 'Tratamento para a proteção da vida ou da incolumidade física do titular ou de terceiro (Art. 7, VII).',
+        'health' => 'Tutela da Saúde',
+        'health_description' => 'Tratamento para a tutela da saúde, exclusivamente, em procedimento realizado por profissionais de saúde ou entidades sanitárias (Art. 7, VIII).',
+        'legitimate_interest' => 'Interesse Legítimo',
+        'legitimate_interest_description' => 'Tratamento necessário para atender aos interesses legítimos do controlador ou de terceiro, exceto quando prevalecerem direitos e liberdades fundamentais do titular (Art. 7, IX).',
+        'credit_protection' => 'Proteção ao Crédito',
+        'credit_protection_description' => 'Tratamento para a proteção do crédito, inclusive quanto ao disposto na legislação pertinente (Art. 7, X).',
+    ],
+
+    'data_subject_right' => [
+        'access' => 'Acesso',
+        'access_description' => 'Direito de confirmar a existência de tratamento e de acessar os dados pessoais (Art. 18, I-II).',
+        'correction' => 'Correção',
+        'correction_description' => 'Direito de corrigir dados incompletos, inexatos ou desatualizados (Art. 18, III).',
+        'anonymization' => 'Anonimização',
+        'anonymization_description' => 'Direito de anonimizar, bloquear ou eliminar dados desnecessários, excessivos ou tratados em desconformidade com a LGPD (Art. 18, IV).',
+        'portability' => 'Portabilidade',
+        'portability_description' => 'Direito à portabilidade dos dados a outro fornecedor de serviço ou produto (Art. 18, V).',
+        'deletion' => 'Eliminação',
+        'deletion_description' => 'Direito de eliminar dados pessoais tratados com o consentimento do titular (Art. 18, VI).',
+        'sharing_info' => 'Informação sobre Compartilhamento',
+        'sharing_info_description' => 'Direito à informação sobre entidades públicas e privadas com as quais o controlador realizou uso compartilhado de dados (Art. 18, VII).',
+        'consent_info' => 'Informação sobre Consentimento',
+        'consent_info_description' => 'Direito à informação sobre a possibilidade de não fornecer consentimento e sobre as consequências da negativa (Art. 18, VIII).',
+        'consent_revocation' => 'Revogação do Consentimento',
+        'consent_revocation_description' => 'Direito de revogar o consentimento a qualquer momento (Art. 18, IX).',
+        'opposition' => 'Oposição',
+        'opposition_description' => 'Direito de se opor ao tratamento realizado com fundamento em uma das hipóteses de dispensa de consentimento, em caso de descumprimento da LGPD (Art. 18, §2).',
+    ],
+
+];

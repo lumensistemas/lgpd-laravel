@@ -1,0 +1,60 @@
+<?php
+
+return [
+
+    'data_sensitivity' => [
+        'public' => 'Public',
+        'public_description' => 'Data that is publicly available and does not require special protection.',
+        'internal' => 'Internal',
+        'internal_description' => 'Data intended for internal use only, not classified as personal data.',
+        'personal' => 'Personal',
+        'personal_description' => 'Data that identifies or can identify a natural person.',
+        'sensitive' => 'Sensitive',
+        'sensitive_description' => 'Data concerning racial or ethnic origin, religious belief, political opinion, union membership, health, sex life, genetic or biometric data.',
+    ],
+
+    'legal_basis' => [
+        'consent' => 'Consent',
+        'consent_description' => "Processing based on the data subject's free, informed, and unambiguous consent (Art. 7, I).",
+        'legal_obligation' => 'Legal Obligation',
+        'legal_obligation_description' => 'Processing necessary to comply with a legal or regulatory obligation (Art. 7, II).',
+        'public_administration' => 'Public Administration',
+        'public_administration_description' => 'Processing by the public administration for the execution of public policies (Art. 7, III).',
+        'research' => 'Research',
+        'research_description' => 'Processing for conducting studies by research bodies, ensuring anonymization whenever possible (Art. 7, IV).',
+        'contract' => 'Contract',
+        'contract_description' => 'Processing necessary for the execution of a contract or preliminary procedures related to a contract (Art. 7, V).',
+        'legal_proceedings' => 'Legal Proceedings',
+        'legal_proceedings_description' => 'Processing for the regular exercise of rights in judicial, administrative, or arbitration proceedings (Art. 7, VI).',
+        'life_protection' => 'Life Protection',
+        'life_protection_description' => 'Processing for the protection of the life or physical safety of the data subject or a third party (Art. 7, VII).',
+        'health' => 'Health Protection',
+        'health_description' => 'Processing for the protection of health, exclusively, in a procedure carried out by health professionals or sanitary entities (Art. 7, VIII).',
+        'legitimate_interest' => 'Legitimate Interest',
+        'legitimate_interest_description' => "Processing necessary for the legitimate interests of the controller or a third party, except when overridden by the data subject's fundamental rights and freedoms (Art. 7, IX).",
+        'credit_protection' => 'Credit Protection',
+        'credit_protection_description' => 'Processing for credit protection, including provisions of the relevant legislation (Art. 7, X).',
+    ],
+
+    'data_subject_right' => [
+        'access' => 'Access',
+        'access_description' => 'Right to confirm the existence of processing and to access personal data (Art. 18, I-II).',
+        'correction' => 'Correction',
+        'correction_description' => 'Right to correct incomplete, inaccurate, or outdated data (Art. 18, III).',
+        'anonymization' => 'Anonymization',
+        'anonymization_description' => 'Right to anonymize, block, or delete unnecessary or excessive data, or data processed in non-compliance with the LGPD (Art. 18, IV).',
+        'portability' => 'Portability',
+        'portability_description' => 'Right to data portability to another service or product provider (Art. 18, V).',
+        'deletion' => 'Deletion',
+        'deletion_description' => 'Right to delete personal data processed with consent (Art. 18, VI).',
+        'sharing_info' => 'Sharing Information',
+        'sharing_info_description' => 'Right to information about public and private entities with which the controller has shared data (Art. 18, VII).',
+        'consent_info' => 'Consent Information',
+        'consent_info_description' => 'Right to information about the possibility of not providing consent and the consequences of denial (Art. 18, VIII).',
+        'consent_revocation' => 'Consent Revocation',
+        'consent_revocation_description' => 'Right to revoke consent at any time (Art. 18, IX).',
+        'opposition' => 'Opposition',
+        'opposition_description' => 'Right to oppose processing carried out on a basis other than consent, in case of non-compliance with the LGPD (Art. 18, §2).',
+    ],
+
+];

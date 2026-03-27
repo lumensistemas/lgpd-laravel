@@ -1,0 +1,175 @@
+# LGPD Laravel
+
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/lumensistemas/lgpd-laravel.svg?style=flat-square)](https://packagist.org/packages/lumensistemas/lgpd-laravel)
+[![Tests](https://img.shields.io/github/actions/workflow/status/lumensistemas/lgpd-laravel/run-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/lumensistemas/lgpd-laravel/actions/workflows/run-tests.yml)
+[![Total Downloads](https://img.shields.io/packagist/dt/lumensistemas/lgpd-laravel.svg?style=flat-square)](https://packagist.org/packages/lumensistemas/lgpd-laravel)
+
+A Laravel package for LGPD (Lei Geral de Proteção de Dados) compliance. Provides models, enums, and migrations for managing data subjects, consent tracking, and processing activity records as required by Brazilian data protection law.
+
+## Installation
+
+You can install the package via composer:
+
+```bash
+composer require lumensistemas/lgpd-laravel
+```
+
+Publish the config file:
+
+```bash
+php artisan vendor:publish --tag=lgpd-config
+```
+
+Publish the migrations (optional, for customization):
+
+```bash
+php artisan vendor:publish --tag=lgpd-migrations
+```
+
+Publish the language files (optional):
+
+```bash
+php artisan vendor:publish --tag=lgpd-lang
+```
+
+Run the migrations:
+
+```bash
+php artisan migrate
+```
+
+## Usage
+
+### Data Subjects
+
+The `DataSubject` model is the central reference point for all personal data associated with an individual. The `document_hash` field uses blind indexing for searchable encryption.
+
+```php
+use LumenSistemas\Lgpd\Models\DataSubject;
+
+$subject = DataSubject::create([
+    'document_hash' => $cpf,
+]);
+```
+
+### Consent Tracking (Art. 8)
+
+Track consent grants and revocations. Consent must be free, informed, and unambiguous under the LGPD.
+
+```php
+use LumenSistemas\Lgpd\Models\Consent;
+use LumenSistemas\Lgpd\Enums\LegalBasis;
+
+$consent = Consent::create([
+    'data_subject_id' => $subject->id,
+    'purpose' => 'Send marketing emails',
+    'legal_basis' => LegalBasis::CONSENT,
+    'granted_at' => now(),
+    'ip_address' => request()->ip(),
+    'user_agent' => request()->userAgent(),
+]);
+
+// Revoke consent
+$consent->update(['revoked_at' => now()]);
+```
+
+### Processing Activities (Art. 37)
+
+Record processing operations as required by the LGPD. Controllers must maintain a log of all personal data processing.
+
+```php
+use LumenSistemas\Lgpd\Models\ProcessingActivity;
+use LumenSistemas\Lgpd\Enums\LegalBasis;
+use LumenSistemas\Lgpd\Enums\DataSensitivity;
+
+ProcessingActivity::create([
+    'data_subject_id' => $subject->id,
+    'activity' => 'user_registration',
+    'legal_basis' => LegalBasis::CONTRACT,
+    'sensitivity' => DataSensitivity::PERSONAL,
+    'purpose' => 'Collect user data to create account',
+    'data_categories' => ['name', 'email', 'cpf'],
+    'retention_period' => '5 years',
+    'processed_at' => now(),
+]);
+```
+
+### Enums
+
+The package provides enums matching the LGPD articles:
+
+**DataSensitivity** — Data classification levels:
+`PUBLIC`, `INTERNAL`, `PERSONAL`, `SENSITIVE`
+
+**LegalBasis (Art. 7)** — Legal bases for data processing:
+`CONSENT`, `LEGAL_OBLIGATION`, `PUBLIC_ADMINISTRATION`, `RESEARCH`, `CONTRACT`, `LEGAL_PROCEEDINGS`, `LIFE_PROTECTION`, `HEALTH`, `LEGITIMATE_INTEREST`, `CREDIT_PROTECTION`
+
+**DataSubjectRight (Art. 18)** — Data subject rights:
+`ACCESS`, `CORRECTION`, `ANONYMIZATION`, `PORTABILITY`, `DELETION`, `SHARING_INFO`, `CONSENT_INFO`, `CONSENT_REVOCATION`, `OPPOSITION`
+
+All enums provide `label()` and `description()` methods with translations in English and Brazilian Portuguese.
+
+```php
+use LumenSistemas\Lgpd\Enums\LegalBasis;
+
+LegalBasis::CONSENT->label();       // "Consent" or "Consentimento"
+LegalBasis::CONSENT->description(); // Full description with article reference
+```
+
+### Configuration
+
+The config file (`config/lgpd.php`) allows you to:
+
+**Multi-tenancy** — Enable tenant isolation with a configurable column name:
+
+```php
+'multi_tenancy' => [
+    'enabled' => true,
+    'column' => 'tenant_id',
+],
+```
+
+**Table names** — Customize table names to avoid conflicts:
+
+```php
+'tables' => [
+    'data_subjects' => 'data_subjects',
+    'consents' => 'consents',
+    'processing_activities' => 'processing_activities',
+],
+```
+
+**Models** — Swap model implementations with your own:
+
+```php
+'models' => [
+    'data_subject' => App\Models\CustomDataSubject::class,
+],
+```
+
+## Testing
+
+```bash
+composer test:all
+```
+
+## Changelog
+
+Please see [CHANGELOG](CHANGELOG.md) for more information on what has changed recently.
+
+## Contributing
+
+Please see [CONTRIBUTING](https://github.com/lumensistemas/.github/blob/main/CONTRIBUTING.md) for details.
+
+## Security Vulnerabilities
+
+Please review [our security policy](../../security/policy) on how to report security vulnerabilities.
+
+## Credits
+
+- [Lucas Vasconcelos](https://github.com/lucasvscn)
+- [All Contributors](../../contributors)
+
+## License
+
+The MIT License (MIT). Please see [License File](LICENSE.md) for more information.

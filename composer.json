@@ -1,0 +1,76 @@
+{
+    "name": "lumensistemas/lgpd-laravel",
+    "description": "A Laravel package for LGPD (Lei Geral de Proteção de Dados) compliance.",
+    "keywords": [
+        "lumensistemas",
+        "lgpd-laravel",
+        "lgpd",
+        "laravel",
+        "privacy",
+        "data-protection",
+        "compliance"
+    ],
+    "homepage": "https://github.com/lumensistemas/lgpd-laravel",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Lucas Vasconcelos",
+            "email": "lucasvscn@pm.me",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": "^8.4",
+        "illuminate/support": "^12.0",
+        "lumensistemas/encryption-laravel": "^1.0"
+    },
+    "require-dev": {
+        "phpstan/phpstan": "^2.0",
+        "pestphp/pest": "^4.0",
+        "pestphp/pest-plugin-type-coverage": "^4.0",
+        "laravel/pint": "^1.0",
+        "rector/rector": "^2.0",
+        "orchestra/testbench": "^10.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "LumenSistemas\\Lgpd\\": "src"
+        },
+        "files": [
+            "src/helpers.php"
+        ]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "LumenSistemas\\Lgpd\\Tests\\": "tests"
+        }
+    },
+    "scripts": {
+        "analyze": "phpstan analyse --memory-limit=512M",
+        "lint": ["rector process --memory-limit=512M", "pint"],
+        "test": "pest --bail",
+        "test:type-coverage": "pest --type-coverage --min=100",
+        "test:arch": "pest --testsuite=Arch",
+        "test:unit": "pest --testsuite=Unit",
+        "test:feature": "pest --testsuite=Feature",
+        "test:coverage": "pest --coverage --min=90",
+        "test:lint": ["rector process --dry-run --clear-cache --memory-limit=512M", "pint --test"],
+        "test:all": ["@test:lint", "@analyze", "@test:type-coverage", "@test:coverage"]
+    },
+    "config": {
+        "sort-packages": true,
+        "allow-plugins": {
+            "pestphp/pest-plugin": true,
+            "phpstan/extension-installer": true
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "LumenSistemas\\Lgpd\\LgpdServiceProvider"
+            ]
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
