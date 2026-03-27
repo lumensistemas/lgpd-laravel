@@ -34,6 +34,7 @@ return [
         'data_subjects' => 'data_subjects',
         'consents' => 'consents',
         'processing_activities' => 'processing_activities',
+        'data_subject_requests' => 'data_subject_requests',
     ],
 
     /*
@@ -50,6 +51,7 @@ return [
         'data_subject' => LumenSistemas\Lgpd\Models\DataSubject::class,
         'consent' => LumenSistemas\Lgpd\Models\Consent::class,
         'processing_activity' => LumenSistemas\Lgpd\Models\ProcessingActivity::class,
+        'data_subject_request' => LumenSistemas\Lgpd\Models\DataSubjectRequest::class,
     ],
 
 ];

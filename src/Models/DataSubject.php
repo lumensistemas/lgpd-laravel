@@ -62,6 +62,19 @@ class DataSubject extends Model
     }
 
     /**
+     * Get the data subject requests associated with this data subject.
+     *
+     * @return HasMany<DataSubjectRequest, $this>
+     */
+    public function dataSubjectRequests(): HasMany
+    {
+        /** @var class-string<DataSubjectRequest> $model */
+        $model = Config::string('lgpd.models.data_subject_request', DataSubjectRequest::class);
+
+        return $this->hasMany($model);
+    }
+
+    /**
      * @return array<string, string>
      */
     #[Override]
