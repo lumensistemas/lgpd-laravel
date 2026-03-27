@@ -20,6 +20,27 @@ enum DataSensitivity: string
     case SENSITIVE = 'sensitive';
 
     /**
+     * Return the highest sensitivity level from a list of values.
+     *
+     * @param non-empty-array<DataSensitivity> $levels
+     */
+    public static function highest(array $levels): self
+    {
+        $ordered = self::cases();
+        $max = 0;
+
+        foreach ($levels as $level) {
+            $index = array_search($level, $ordered, true);
+
+            if (is_int($index) && $index > $max) {
+                $max = $index;
+            }
+        }
+
+        return $ordered[$max];
+    }
+
+    /**
      * Get the human-readable label for the data sensitivity level.
      */
     public function label(): string

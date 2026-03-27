@@ -37,3 +37,23 @@ it('returns translated descriptions', function (DataSensitivity $case): void {
 
     expect($description)->toBeString()->not->toBe(sprintf('lgpd::enums.data_sensitivity.%s_description', $case->value));
 })->with(DataSensitivity::cases());
+
+it('returns the highest sensitivity from mixed levels', function (): void {
+    expect(DataSensitivity::highest([
+        DataSensitivity::PERSONAL,
+        DataSensitivity::PUBLIC,
+        DataSensitivity::SENSITIVE,
+        DataSensitivity::INTERNAL,
+    ]))->toBe(DataSensitivity::SENSITIVE);
+});
+
+it('returns the single value when given one element', function (): void {
+    expect(DataSensitivity::highest([DataSensitivity::PERSONAL]))->toBe(DataSensitivity::PERSONAL);
+});
+
+it('returns PUBLIC when all levels are PUBLIC', function (): void {
+    expect(DataSensitivity::highest([
+        DataSensitivity::PUBLIC,
+        DataSensitivity::PUBLIC,
+    ]))->toBe(DataSensitivity::PUBLIC);
+});
