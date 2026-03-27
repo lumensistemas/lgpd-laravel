@@ -6,6 +6,7 @@ use Rector\Config\RectorConfig;
 use Rector\Naming\Rector\Assign\RenameVariableToMatchMethodCallReturnTypeRector;
 use Rector\Naming\Rector\Class_\RenamePropertyToMatchTypeRector;
 use Rector\Naming\Rector\ClassMethod\RenameParamToMatchTypeRector;
+use Rector\Naming\Rector\ClassMethod\RenameVariableToMatchNewTypeRector;
 
 return RectorConfig::configure()
     ->withPaths([
@@ -22,6 +23,7 @@ return RectorConfig::configure()
     ->withSkip([
         RenameVariableToMatchMethodCallReturnTypeRector::class,
         CatchExceptionNameMatchingTypeRector::class,
+        RenameVariableToMatchNewTypeRector::class,
         RenamePropertyToMatchTypeRector::class,
         RenameParamToMatchTypeRector::class,
     ])
