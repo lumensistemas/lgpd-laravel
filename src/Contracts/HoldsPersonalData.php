@@ -4,15 +4,19 @@ declare(strict_types=1);
 
 namespace LumenSistemas\Lgpd\Contracts;
 
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use LumenSistemas\Lgpd\Enums\DataSensitivity;
+use LumenSistemas\Lgpd\Models\DataSubject;
 
 /**
- * Interface HasDataClassification.
+ * Interface HoldsPersonalData.
  *
- * Implement this interface on any Eloquent model to declare the
- * data sensitivity level of each column that contains personal data.
+ * Implement this interface on any Eloquent model that holds personal data.
+ * It declares the data sensitivity level of each column and provides
+ * a relationship to the DataSubject.
  */
-interface HasDataClassification
+interface HoldsPersonalData
 {
     /**
      * Return a map of column names to their data sensitivity level.
@@ -31,4 +35,11 @@ interface HasDataClassification
      * @return array<string, DataSensitivity>
      */
     public function dataClassification(): array;
+
+    /**
+     * Get the data subject associated with this model.
+     *
+     * @return BelongsTo<DataSubject, Model>
+     */
+    public function dataSubject(): BelongsTo;
 }

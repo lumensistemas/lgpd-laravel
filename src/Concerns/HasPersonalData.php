@@ -6,7 +6,6 @@ namespace LumenSistemas\Lgpd\Concerns;
 
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\Config;
-use LumenSistemas\Lgpd\Contracts\HasDataClassification;
 use LumenSistemas\Lgpd\Models\DataSubject;
 
 /**
@@ -15,11 +14,9 @@ use LumenSistemas\Lgpd\Models\DataSubject;
  * Use this trait on any Eloquent model that contains personal data
  * (e.g., User, Customer, Employee) to link it to a DataSubject.
  *
- * The model must have a `data_subject_id` column and implement HasDataClassification.
- *
  * @phpstan-require-extends \Illuminate\Database\Eloquent\Model
  *
- * @phpstan-require-implements HasDataClassification
+ * @phpstan-require-implements \LumenSistemas\Lgpd\Contracts\HoldsPersonalData
  */
 trait HasPersonalData
 {

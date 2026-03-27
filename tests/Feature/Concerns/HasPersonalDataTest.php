@@ -7,7 +7,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Schema;
 use LumenSistemas\Lgpd\Concerns\HasPersonalData;
-use LumenSistemas\Lgpd\Contracts\HasDataClassification;
+use LumenSistemas\Lgpd\Contracts\HoldsPersonalData;
 use LumenSistemas\Lgpd\Enums\DataSensitivity;
 use LumenSistemas\Lgpd\Models\DataSubject;
 
@@ -29,7 +29,7 @@ function createUser(array $attributes = []): Model
 {
     ensureUsersTable();
 
-    $user = new class() extends Model implements HasDataClassification {
+    $user = new class() extends Model implements HoldsPersonalData {
         use HasPersonalData;
 
         protected $table = 'users';
