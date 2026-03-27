@@ -62,19 +62,6 @@ class DataSubject extends Model
     }
 
     /**
-     * Get the processing activities associated with this data subject.
-     *
-     * @return HasMany<ProcessingActivity, $this>
-     */
-    public function processingActivities(): HasMany
-    {
-        /** @var class-string<ProcessingActivity> $model */
-        $model = Config::string('lgpd.models.processing_activity', ProcessingActivity::class);
-
-        return $this->hasMany($model);
-    }
-
-    /**
      * @return array<string, string>
      */
     #[Override]

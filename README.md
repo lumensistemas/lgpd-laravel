@@ -73,9 +73,9 @@ $consent = Consent::create([
 $consent->update(['revoked_at' => now()]);
 ```
 
-### Processing Activities (Art. 37)
+### Processing Activities Registry (Art. 37)
 
-Record processing operations as required by the LGPD. Controllers must maintain a log of all personal data processing.
+Maintain a compliance registry of your organization's data processing operations as required by the LGPD. This is a catalog of *what* processing your system does, not a per-event audit log.
 
 ```php
 use LumenSistemas\Lgpd\Models\ProcessingActivity;
@@ -83,7 +83,6 @@ use LumenSistemas\Lgpd\Enums\LegalBasis;
 use LumenSistemas\Lgpd\Enums\DataSensitivity;
 
 ProcessingActivity::create([
-    'data_subject_id' => $subject->id,
     'activity' => 'user_registration',
     'legal_basis' => LegalBasis::CONTRACT,
     'sensitivity' => DataSensitivity::PERSONAL,

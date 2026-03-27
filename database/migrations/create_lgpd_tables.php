@@ -37,9 +37,8 @@ return new class() extends Migration {
             $table->timestamps();
         });
 
-        Schema::create($processingActivitiesTable, function (Blueprint $table) use ($dataSubjectsTable): void {
+        Schema::create($processingActivitiesTable, function (Blueprint $table): void {
             $table->uuid('id')->primary();
-            $table->foreignUuid('data_subject_id')->nullable()->constrained($dataSubjectsTable);
 
             if (Config::boolean('lgpd.multi_tenancy.enabled')) {
                 $table->string(Config::string('lgpd.multi_tenancy.column'))->index();
