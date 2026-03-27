@@ -52,6 +52,11 @@ class Consent extends Model
         'metadata',
     ];
 
+    /**
+     * Construct a new Consent model instance.
+     *
+     * Initialize the model and set the table name from configuration.
+     */
     public function __construct(array $attributes = [])
     {
         parent::__construct($attributes);
@@ -60,6 +65,8 @@ class Consent extends Model
     }
 
     /**
+     * Get the data subject associated with this consent.
+     *
      * @return BelongsTo<DataSubject, $this>
      */
     public function dataSubject(): BelongsTo
@@ -80,12 +87,12 @@ class Consent extends Model
             'id' => 'string',
             'data_subject_id' => 'string',
             'legal_basis' => LegalBasis::class,
-            'granted_at' => 'datetime',
-            'revoked_at' => 'datetime',
-            'expires_at' => 'datetime',
+            'granted_at' => 'immutable_datetime',
+            'revoked_at' => 'immutable_datetime',
+            'expires_at' => 'immutable_datetime',
             'metadata' => 'array',
-            'created_at' => 'datetime',
-            'updated_at' => 'datetime',
+            'created_at' => 'immutable_datetime',
+            'updated_at' => 'immutable_datetime',
         ];
     }
 }

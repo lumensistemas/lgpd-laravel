@@ -47,6 +47,7 @@
     },
     "scripts": {
         "analyze": "phpstan analyse --memory-limit=512M",
+        "analyse": "phpstan analyse --memory-limit=512M",
         "lint": ["rector process --memory-limit=512M", "pint"],
         "test": "pest --bail",
         "test:type-coverage": "pest --type-coverage --min=100",

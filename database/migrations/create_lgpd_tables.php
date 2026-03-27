@@ -52,6 +52,7 @@ return new class() extends Migration {
             $table->json('data_categories')->nullable();
             $table->string('retention_period')->nullable();
             $table->timestamp('processed_at');
+            $table->softDeletes();
             $table->timestamps();
         });
 

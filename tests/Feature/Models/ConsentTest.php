@@ -74,9 +74,9 @@ it('casts datetime fields', function (): void {
 
     $consent->refresh();
 
-    expect($consent->granted_at)->toBeInstanceOf(Carbon\Carbon::class);
-    expect($consent->revoked_at)->toBeInstanceOf(Carbon\Carbon::class);
-    expect($consent->expires_at)->toBeInstanceOf(Carbon\Carbon::class);
+    expect($consent->granted_at)->toBeInstanceOf(Carbon\CarbonImmutable::class);
+    expect($consent->revoked_at)->toBeInstanceOf(Carbon\CarbonImmutable::class);
+    expect($consent->expires_at)->toBeInstanceOf(Carbon\CarbonImmutable::class);
 });
 
 it('casts metadata to array', function (): void {

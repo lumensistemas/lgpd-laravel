@@ -110,7 +110,7 @@ it('casts processed_at to datetime', function (): void {
 
     $activity->refresh();
 
-    expect($activity->processed_at)->toBeInstanceOf(Carbon\Carbon::class);
+    expect($activity->processed_at)->toBeInstanceOf(Carbon\CarbonImmutable::class);
 });
 
 it('belongs to a data subject', function (): void {

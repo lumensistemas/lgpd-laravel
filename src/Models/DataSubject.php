@@ -24,9 +24,9 @@ use Override;
  *
  * @property string $id
  * @property string $document_hash
+ * @property null|CarbonImmutable $deleted_at
  * @property null|CarbonImmutable $created_at
  * @property null|CarbonImmutable $updated_at
- * @property null|CarbonImmutable $deleted_at
  */
 class DataSubject extends Model
 {
@@ -36,6 +36,11 @@ class DataSubject extends Model
     /** @var list<string> */
     protected $fillable = ['document_hash'];
 
+    /**
+     * Construct a new DataSubject model instance.
+     *
+     * Initialize the model and set the table name from configuration.
+     */
     public function __construct(array $attributes = [])
     {
         parent::__construct($attributes);
@@ -44,6 +49,8 @@ class DataSubject extends Model
     }
 
     /**
+     * Get the consents associated with this data subject.
+     *
      * @return HasMany<Consent, $this>
      */
     public function consents(): HasMany
@@ -55,6 +62,8 @@ class DataSubject extends Model
     }
 
     /**
+     * Get the processing activities associated with this data subject.
+     *
      * @return HasMany<ProcessingActivity, $this>
      */
     public function processingActivities(): HasMany
@@ -74,8 +83,9 @@ class DataSubject extends Model
         return [
             'id' => 'string',
             'document_hash' => AsBlindIndex::class,
-            'created_at' => 'datetime',
-            'updated_at' => 'datetime',
+            'deleted_at' => 'immutable_datetime',
+            'created_at' => 'immutable_datetime',
+            'updated_at' => 'immutable_datetime',
         ];
     }
 }

@@ -29,6 +29,7 @@ use Override;
  * @property null|array<int, string> $data_categories
  * @property null|string $retention_period
  * @property CarbonImmutable $processed_at
+ * @property null|CarbonImmutable $deleted_at
  * @property null|CarbonImmutable $created_at
  * @property null|CarbonImmutable $updated_at
  */
@@ -48,6 +49,11 @@ class ProcessingActivity extends Model
         'processed_at',
     ];
 
+    /**
+     * Construct a new ProcessingActivity model instance.
+     *
+     * Initialize the model and set the table name from configuration.
+     */
     public function __construct(array $attributes = [])
     {
         parent::__construct($attributes);
@@ -56,6 +62,8 @@ class ProcessingActivity extends Model
     }
 
     /**
+     * Get the data subject associated with this processing activity, if any.
+     *
      * @return BelongsTo<DataSubject, $this>
      */
     public function dataSubject(): BelongsTo
@@ -78,9 +86,10 @@ class ProcessingActivity extends Model
             'legal_basis' => LegalBasis::class,
             'sensitivity' => DataSensitivity::class,
             'data_categories' => 'array',
-            'processed_at' => 'datetime',
-            'created_at' => 'datetime',
-            'updated_at' => 'datetime',
+            'processed_at' => 'immutable_datetime',
+            'deleted_at' => 'immutable_datetime',
+            'created_at' => 'immutable_datetime',
+            'updated_at' => 'immutable_datetime',
         ];
     }
 }
