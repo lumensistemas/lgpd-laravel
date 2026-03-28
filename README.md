@@ -219,6 +219,17 @@ LegalBasis::CONSENT->label();       // "Consent" or "Consentimento"
 LegalBasis::CONSENT->description(); // Full description with article reference
 ```
 
+`DataSensitivity::highest()` returns the most sensitive level from a list — useful when determining the overall sensitivity of a set of columns:
+
+```php
+use LumenSistemas\Lgpd\Enums\DataSensitivity;
+
+DataSensitivity::highest([
+    DataSensitivity::PERSONAL,
+    DataSensitivity::SENSITIVE,
+]); // DataSensitivity::SENSITIVE
+```
+
 ### Configuration
 
 The config file (`config/lgpd.php`) allows you to:
