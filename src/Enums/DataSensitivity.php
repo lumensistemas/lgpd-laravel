@@ -45,12 +45,7 @@ enum DataSensitivity: string
      */
     public function label(): string
     {
-        return match ($this) {
-            self::PUBLIC => trans_string('lgpd::enums.data_sensitivity.public'),
-            self::INTERNAL => trans_string('lgpd::enums.data_sensitivity.internal'),
-            self::PERSONAL => trans_string('lgpd::enums.data_sensitivity.personal'),
-            self::SENSITIVE => trans_string('lgpd::enums.data_sensitivity.sensitive'),
-        };
+        return trans_string('lgpd::enums.data_sensitivity.'.$this->value);
     }
 
     /**
@@ -58,11 +53,6 @@ enum DataSensitivity: string
      */
     public function description(): string
     {
-        return match ($this) {
-            self::PUBLIC => trans_string('lgpd::enums.data_sensitivity.public_description'),
-            self::INTERNAL => trans_string('lgpd::enums.data_sensitivity.internal_description'),
-            self::PERSONAL => trans_string('lgpd::enums.data_sensitivity.personal_description'),
-            self::SENSITIVE => trans_string('lgpd::enums.data_sensitivity.sensitive_description'),
-        };
+        return trans_string(sprintf('lgpd::enums.data_sensitivity.%s_description', $this->value));
     }
 }
