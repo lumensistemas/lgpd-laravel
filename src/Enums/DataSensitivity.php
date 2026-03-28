@@ -20,16 +20,33 @@ enum DataSensitivity: string
     case SENSITIVE = 'sensitive';
 
     /**
+     * Return the highest sensitivity level from a list of values.
+     *
+     * @param non-empty-array<DataSensitivity> $levels
+     */
+    public static function highest(array $levels): self
+    {
+        $cases = self::cases();
+        $order = array_flip(array_map(fn (self $case): string => $case->value, $cases));
+        $max = 0;
+
+        foreach ($levels as $level) {
+            $index = $order[$level->value] ?? 0;
+
+            if ($index > $max) {
+                $max = $index;
+            }
+        }
+
+        return $cases[$max];
+    }
+
+    /**
      * Get the human-readable label for the data sensitivity level.
      */
     public function label(): string
     {
-        return match ($this) {
-            self::PUBLIC => trans_string('lgpd::enums.data_sensitivity.public'),
-            self::INTERNAL => trans_string('lgpd::enums.data_sensitivity.internal'),
-            self::PERSONAL => trans_string('lgpd::enums.data_sensitivity.personal'),
-            self::SENSITIVE => trans_string('lgpd::enums.data_sensitivity.sensitive'),
-        };
+        return trans_string('lgpd::enums.data_sensitivity.'.$this->value);
     }
 
     /**
@@ -37,11 +54,6 @@ enum DataSensitivity: string
      */
     public function description(): string
     {
-        return match ($this) {
-            self::PUBLIC => trans_string('lgpd::enums.data_sensitivity.public_description'),
-            self::INTERNAL => trans_string('lgpd::enums.data_sensitivity.internal_description'),
-            self::PERSONAL => trans_string('lgpd::enums.data_sensitivity.personal_description'),
-            self::SENSITIVE => trans_string('lgpd::enums.data_sensitivity.sensitive_description'),
-        };
+        return trans_string('lgpd::enums.data_sensitivity.'.$this->value.'_description');
     }
 }

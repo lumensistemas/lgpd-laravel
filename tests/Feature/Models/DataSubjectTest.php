@@ -50,11 +50,11 @@ it('has consents relationship', function (): void {
     expect($subject->consents)->toBeEmpty();
 });
 
-it('has processing activities relationship', function (): void {
+it('has data subject requests relationship', function (): void {
     $subject = DataSubject::create(['document_hash' => '12345678900']);
 
-    expect($subject->processingActivities())->toBeInstanceOf(Illuminate\Database\Eloquent\Relations\HasMany::class);
-    expect($subject->processingActivities)->toBeEmpty();
+    expect($subject->dataSubjectRequests())->toBeInstanceOf(Illuminate\Database\Eloquent\Relations\HasMany::class);
+    expect($subject->dataSubjectRequests)->toBeEmpty();
 });
 
 it('casts document_hash as blind index', function (): void {

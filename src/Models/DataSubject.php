@@ -24,9 +24,9 @@ use Override;
  *
  * @property string $id
  * @property string $document_hash
+ * @property null|CarbonImmutable $deleted_at
  * @property null|CarbonImmutable $created_at
  * @property null|CarbonImmutable $updated_at
- * @property null|CarbonImmutable $deleted_at
  */
 class DataSubject extends Model
 {
@@ -44,6 +44,8 @@ class DataSubject extends Model
     }
 
     /**
+     * Get the consents associated with this data subject.
+     *
      * @return HasMany<Consent, $this>
      */
     public function consents(): HasMany
@@ -55,12 +57,14 @@ class DataSubject extends Model
     }
 
     /**
-     * @return HasMany<ProcessingActivity, $this>
+     * Get the data subject requests associated with this data subject.
+     *
+     * @return HasMany<DataSubjectRequest, $this>
      */
-    public function processingActivities(): HasMany
+    public function dataSubjectRequests(): HasMany
     {
-        /** @var class-string<ProcessingActivity> $model */
-        $model = Config::string('lgpd.models.processing_activity', ProcessingActivity::class);
+        /** @var class-string<DataSubjectRequest> $model */
+        $model = Config::string('lgpd.models.data_subject_request', DataSubjectRequest::class);
 
         return $this->hasMany($model);
     }
@@ -74,8 +78,9 @@ class DataSubject extends Model
         return [
             'id' => 'string',
             'document_hash' => AsBlindIndex::class,
-            'created_at' => 'datetime',
-            'updated_at' => 'datetime',
+            'deleted_at' => 'immutable_datetime',
+            'created_at' => 'immutable_datetime',
+            'updated_at' => 'immutable_datetime',
         ];
     }
 }

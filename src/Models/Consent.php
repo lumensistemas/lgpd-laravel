@@ -5,12 +5,16 @@ declare(strict_types=1);
 namespace LumenSistemas\Lgpd\Models;
 
 use Carbon\CarbonImmutable;
+use Illuminate\Database\Eloquent\Attributes\Scope;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Config;
 use LumenSistemas\Lgpd\Enums\LegalBasis;
+use LumenSistemas\Lgpd\Events\ConsentGranted;
+use LumenSistemas\Lgpd\Events\ConsentRevoked;
 use Override;
 
 /**
@@ -39,6 +43,11 @@ class Consent extends Model
     use HasUuids;
     use SoftDeletes;
 
+    /** @var array<string, class-string> */
+    protected $dispatchesEvents = [
+        'created' => ConsentGranted::class,
+    ];
+
     /** @var list<string> */
     protected $fillable = [
         'data_subject_id',
@@ -60,6 +69,8 @@ class Consent extends Model
     }
 
     /**
+     * Get the data subject associated with this consent.
+     *
      * @return BelongsTo<DataSubject, $this>
      */
     public function dataSubject(): BelongsTo
@@ -68,6 +79,54 @@ class Consent extends Model
         $model = Config::string('lgpd.models.data_subject', DataSubject::class);
 
         return $this->belongsTo($model);
+    }
+
+    #[Override]
+    protected static function booted(): void
+    {
+        static::updated(function (self $consent): void {
+            if ($consent->revoked_at !== null && $consent->wasChanged('revoked_at')) {
+                ConsentRevoked::dispatch($consent);
+            }
+        });
+    }
+
+    /**
+     * Scope to consents that are currently active (granted, not revoked, not expired).
+     *
+     * @param Builder<self> $query
+     */
+    #[Scope]
+    protected function active(Builder $query): void
+    {
+        $query->whereNull('revoked_at')
+            ->where(function (Builder $q): void {
+                $q->whereNull('expires_at');
+                $q->orWhere('expires_at', '>', now());
+            });
+    }
+
+    /**
+     * Scope to consents that have been revoked.
+     *
+     * @param Builder<self> $query
+     */
+    #[Scope]
+    protected function revoked(Builder $query): void
+    {
+        $query->whereNotNull('revoked_at');
+    }
+
+    /**
+     * Scope to consents that have expired.
+     *
+     * @param Builder<self> $query
+     */
+    #[Scope]
+    protected function expired(Builder $query): void
+    {
+        $query->whereNotNull('expires_at')
+            ->where('expires_at', '<=', now());
     }
 
     /**
@@ -80,12 +139,12 @@ class Consent extends Model
             'id' => 'string',
             'data_subject_id' => 'string',
             'legal_basis' => LegalBasis::class,
-            'granted_at' => 'datetime',
-            'revoked_at' => 'datetime',
-            'expires_at' => 'datetime',
+            'granted_at' => 'immutable_datetime',
+            'revoked_at' => 'immutable_datetime',
+            'expires_at' => 'immutable_datetime',
             'metadata' => 'array',
-            'created_at' => 'datetime',
-            'updated_at' => 'datetime',
+            'created_at' => 'immutable_datetime',
+            'updated_at' => 'immutable_datetime',
         ];
     }
 }

@@ -49,6 +49,11 @@ class TestCase extends BaseTestCase
             file_put_contents($authKeyPath, sodium_crypto_auth_keygen());
         }
 
+        if (PHP_OS_FAMILY !== 'Windows') {
+            chmod($encKeyPath, 0o600);
+            chmod($authKeyPath, 0o600);
+        }
+
         $app['config']->set('encryption-laravel.enc_key_path', $encKeyPath);
         $app['config']->set('encryption-laravel.auth_key_path', $authKeyPath);
     }

@@ -71,11 +71,16 @@ $consent = Consent::create([
 
 // Revoke consent
 $consent->update(['revoked_at' => now()]);
+
+// Query scopes
+Consent::active()->get();   // granted, not revoked, not expired
+Consent::revoked()->get();  // revoked consents
+Consent::expired()->get();  // past expiry date
 ```
 
-### Processing Activities (Art. 37)
+### Processing Activities Registry (Art. 37)
 
-Record processing operations as required by the LGPD. Controllers must maintain a log of all personal data processing.
+Maintain a compliance registry of your organization's data processing operations as required by the LGPD. This is a catalog of *what* processing your system does, not a per-event audit log.
 
 ```php
 use LumenSistemas\Lgpd\Models\ProcessingActivity;
@@ -83,7 +88,6 @@ use LumenSistemas\Lgpd\Enums\LegalBasis;
 use LumenSistemas\Lgpd\Enums\DataSensitivity;
 
 ProcessingActivity::create([
-    'data_subject_id' => $subject->id,
     'activity' => 'user_registration',
     'legal_basis' => LegalBasis::CONTRACT,
     'sensitivity' => DataSensitivity::PERSONAL,
@@ -92,6 +96,107 @@ ProcessingActivity::create([
     'retention_period' => '5 years',
     'processed_at' => now(),
 ]);
+```
+
+### Data Subject Requests (Art. 18)
+
+Track requests from data subjects exercising their rights. Includes query scopes for status filtering and overdue detection (15-day deadline per Art. 18, §3).
+
+```php
+use LumenSistemas\Lgpd\Models\DataSubjectRequest;
+use LumenSistemas\Lgpd\Enums\DataSubjectRight;
+use LumenSistemas\Lgpd\Enums\RequestStatus;
+
+// Create a request
+$request = DataSubjectRequest::create([
+    'data_subject_id' => $subject->id,
+    'right' => DataSubjectRight::ACCESS,
+    'status' => RequestStatus::PENDING,
+    'requested_at' => now(),
+]);
+
+// Update status
+$request->update([
+    'status' => RequestStatus::COMPLETED,
+    'responded_at' => now(),
+    'response_notes' => 'Data export sent to customer email.',
+]);
+
+// Query scopes
+DataSubjectRequest::pending()->get();
+DataSubjectRequest::overdue()->get();       // default 15 days
+DataSubjectRequest::overdue(30)->get();     // custom deadline
+```
+
+### Personal Data Classification
+
+Use the `HoldsPersonalData` interface and `HasPersonalData` trait on any model that contains personal data. Declare the sensitivity of each column via `dataClassification()`.
+
+```php
+use Illuminate\Database\Eloquent\Model;
+use LumenSistemas\Lgpd\Concerns\HasPersonalData;
+use LumenSistemas\Lgpd\Contracts\HoldsPersonalData;
+use LumenSistemas\Lgpd\Enums\DataSensitivity;
+
+class User extends Model implements HoldsPersonalData
+{
+    use HasPersonalData;
+
+    public function dataClassification(): array
+    {
+        return [
+            'name'  => DataSensitivity::PERSONAL,
+            'email' => DataSensitivity::PERSONAL,
+            'cpf'   => DataSensitivity::SENSITIVE,
+        ];
+    }
+}
+```
+
+### Anonymization and Masking (Art. 18, IV)
+
+Add the `Anonymizable` trait for anonymization and display masking capabilities.
+
+```php
+use LumenSistemas\Lgpd\Concerns\Anonymizable;
+
+class User extends Model implements HoldsPersonalData
+{
+    use HasPersonalData, Anonymizable;
+
+    // ...
+}
+```
+
+**Anonymize** — permanently replaces classified fields in memory. Does NOT auto-save, so your app controls authorization and logging:
+
+```php
+$user->anonymize()->save();
+
+$user->isAnonymized(); // true
+```
+
+**Mask** — returns masked values for display without modifying the model:
+
+```php
+$user->masked();
+// ['name' => 'L***s', 'email' => 'l***************m', 'cpf' => '1*********0']
+
+$user->masked(['email']);
+// ['email' => 'l***************m']
+```
+
+Override `anonymizedValue()` or `maskedValue()` for custom strategies per column:
+
+```php
+protected function maskedValue(string $column, string $value): string
+{
+    return match ($column) {
+        'email' => preg_replace('/^(.).*(@.*)$/', '$1***$2', $value) ?? '***',
+        'cpf'   => '***.***.'.mb_substr($value, 6, 3).'-'.mb_substr($value, 9, 2),
+        default => mb_substr($value, 0, 1).'****',
+    };
+}
 ```
 
 ### Enums
@@ -107,6 +212,9 @@ The package provides enums matching the LGPD articles:
 **DataSubjectRight (Art. 18)** — Data subject rights:
 `ACCESS`, `CORRECTION`, `ANONYMIZATION`, `PORTABILITY`, `DELETION`, `SHARING_INFO`, `CONSENT_INFO`, `CONSENT_REVOCATION`, `OPPOSITION`
 
+**RequestStatus** — DSR workflow status:
+`PENDING`, `IN_PROGRESS`, `COMPLETED`, `DENIED`
+
 All enums provide `label()` and `description()` methods with translations in English and Brazilian Portuguese.
 
 ```php
@@ -114,6 +222,17 @@ use LumenSistemas\Lgpd\Enums\LegalBasis;
 
 LegalBasis::CONSENT->label();       // "Consent" or "Consentimento"
 LegalBasis::CONSENT->description(); // Full description with article reference
+```
+
+`DataSensitivity::highest()` returns the most sensitive level from a list — useful when determining the overall sensitivity of a set of columns:
+
+```php
+use LumenSistemas\Lgpd\Enums\DataSensitivity;
+
+DataSensitivity::highest([
+    DataSensitivity::PERSONAL,
+    DataSensitivity::SENSITIVE,
+]); // DataSensitivity::SENSITIVE
 ```
 
 ### Configuration
@@ -136,6 +255,7 @@ The config file (`config/lgpd.php`) allows you to:
     'data_subjects' => 'data_subjects',
     'consents' => 'consents',
     'processing_activities' => 'processing_activities',
+    'data_subject_requests' => 'data_subject_requests',
 ],
 ```
 

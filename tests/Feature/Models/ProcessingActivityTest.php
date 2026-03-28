@@ -5,14 +5,9 @@ declare(strict_types=1);
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use LumenSistemas\Lgpd\Enums\DataSensitivity;
 use LumenSistemas\Lgpd\Enums\LegalBasis;
-use LumenSistemas\Lgpd\Models\DataSubject;
 use LumenSistemas\Lgpd\Models\ProcessingActivity;
 
 uses(RefreshDatabase::class);
-
-beforeEach(function (): void {
-    $this->subject = DataSubject::create(['document_hash' => '12345678900']);
-});
 
 it('uses the configured table name', function (): void {
     expect(new ProcessingActivity()->getTable())->toBe('processing_activities');
@@ -26,7 +21,6 @@ it('uses a custom table name from config', function (): void {
 
 it('has uuid primary key', function (): void {
     $activity = ProcessingActivity::create([
-        'data_subject_id' => $this->subject->id,
         'activity' => 'user_registration',
         'legal_basis' => LegalBasis::CONTRACT,
         'sensitivity' => DataSensitivity::PERSONAL,
@@ -41,7 +35,6 @@ it('has uuid primary key', function (): void {
 it('has the correct fillable attributes', function (): void {
     $fillable = new ProcessingActivity()->getFillable();
 
-    expect($fillable)->toContain('data_subject_id');
     expect($fillable)->toContain('activity');
     expect($fillable)->toContain('legal_basis');
     expect($fillable)->toContain('sensitivity');
@@ -53,7 +46,6 @@ it('has the correct fillable attributes', function (): void {
 
 it('casts legal_basis to LegalBasis enum', function (): void {
     $activity = ProcessingActivity::create([
-        'data_subject_id' => $this->subject->id,
         'activity' => 'user_registration',
         'legal_basis' => LegalBasis::CONTRACT,
         'sensitivity' => DataSensitivity::PERSONAL,
@@ -68,7 +60,6 @@ it('casts legal_basis to LegalBasis enum', function (): void {
 
 it('casts sensitivity to DataSensitivity enum', function (): void {
     $activity = ProcessingActivity::create([
-        'data_subject_id' => $this->subject->id,
         'activity' => 'medical_record_access',
         'legal_basis' => LegalBasis::HEALTH,
         'sensitivity' => DataSensitivity::SENSITIVE,
@@ -83,7 +74,6 @@ it('casts sensitivity to DataSensitivity enum', function (): void {
 
 it('casts data_categories to array', function (): void {
     $activity = ProcessingActivity::create([
-        'data_subject_id' => $this->subject->id,
         'activity' => 'user_registration',
         'legal_basis' => LegalBasis::CONTRACT,
         'sensitivity' => DataSensitivity::PERSONAL,
@@ -100,7 +90,6 @@ it('casts data_categories to array', function (): void {
 
 it('casts processed_at to datetime', function (): void {
     $activity = ProcessingActivity::create([
-        'data_subject_id' => $this->subject->id,
         'activity' => 'user_registration',
         'legal_basis' => LegalBasis::CONTRACT,
         'sensitivity' => DataSensitivity::PERSONAL,
@@ -110,40 +99,11 @@ it('casts processed_at to datetime', function (): void {
 
     $activity->refresh();
 
-    expect($activity->processed_at)->toBeInstanceOf(Carbon\Carbon::class);
-});
-
-it('belongs to a data subject', function (): void {
-    $activity = ProcessingActivity::create([
-        'data_subject_id' => $this->subject->id,
-        'activity' => 'user_registration',
-        'legal_basis' => LegalBasis::CONTRACT,
-        'sensitivity' => DataSensitivity::PERSONAL,
-        'purpose' => 'Create account',
-        'processed_at' => now(),
-    ]);
-
-    expect($activity->dataSubject)->toBeInstanceOf(DataSubject::class);
-    expect($activity->dataSubject->id)->toBe($this->subject->id);
-});
-
-it('allows nullable data_subject_id', function (): void {
-    $activity = ProcessingActivity::create([
-        'data_subject_id' => null,
-        'activity' => 'anonymized_analytics',
-        'legal_basis' => LegalBasis::LEGITIMATE_INTEREST,
-        'sensitivity' => DataSensitivity::INTERNAL,
-        'purpose' => 'Aggregate usage statistics',
-        'processed_at' => now(),
-    ]);
-
-    expect($activity->data_subject_id)->toBeNull();
-    expect($activity->dataSubject)->toBeNull();
+    expect($activity->processed_at)->toBeInstanceOf(Carbon\CarbonImmutable::class);
 });
 
 it('stores nullable fields as null', function (): void {
     $activity = ProcessingActivity::create([
-        'data_subject_id' => $this->subject->id,
         'activity' => 'user_registration',
         'legal_basis' => LegalBasis::CONTRACT,
         'sensitivity' => DataSensitivity::PERSONAL,
@@ -157,9 +117,8 @@ it('stores nullable fields as null', function (): void {
     expect($activity->retention_period)->toBeNull();
 });
 
-it('has restrict on delete foreign key constraint', function (): void {
-    ProcessingActivity::create([
-        'data_subject_id' => $this->subject->id,
+it('supports soft deletes', function (): void {
+    $activity = ProcessingActivity::create([
         'activity' => 'user_registration',
         'legal_basis' => LegalBasis::CONTRACT,
         'sensitivity' => DataSensitivity::PERSONAL,
@@ -167,10 +126,9 @@ it('has restrict on delete foreign key constraint', function (): void {
         'processed_at' => now(),
     ]);
 
-    expect(fn () => $this->subject->forceDelete())
-        ->toThrow(Illuminate\Database\QueryException::class);
-});
+    $activity->delete();
 
-it('does not use soft deletes', function (): void {
-    expect(in_array(Illuminate\Database\Eloquent\SoftDeletes::class, class_uses_recursive(ProcessingActivity::class)))->toBeFalse();
+    expect(ProcessingActivity::count())->toBe(0);
+    expect(ProcessingActivity::withTrashed()->count())->toBe(1);
+    expect($activity->trashed())->toBeTrue();
 });

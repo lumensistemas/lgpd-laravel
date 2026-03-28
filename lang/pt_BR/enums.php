@@ -57,4 +57,15 @@ return [
         'opposition_description' => 'Direito de se opor ao tratamento realizado com fundamento em uma das hipóteses de dispensa de consentimento, em caso de descumprimento da LGPD (Art. 18, §2).',
     ],
 
+    'request_status' => [
+        'pending' => 'Pendente',
+        'pending_description' => 'A solicitação foi recebida e aguarda análise.',
+        'in_progress' => 'Em Andamento',
+        'in_progress_description' => 'A solicitação está sendo processada pela organização.',
+        'completed' => 'Concluída',
+        'completed_description' => 'A solicitação foi atendida e o titular foi notificado.',
+        'denied' => 'Negada',
+        'denied_description' => 'A solicitação foi negada com justificativa fornecida ao titular.',
+    ],
+
 ];

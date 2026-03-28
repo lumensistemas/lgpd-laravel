@@ -57,4 +57,15 @@ return [
         'opposition_description' => 'Right to oppose processing carried out on a basis other than consent, in case of non-compliance with the LGPD (Art. 18, §2).',
     ],
 
+    'request_status' => [
+        'pending' => 'Pending',
+        'pending_description' => 'The request has been received and is awaiting review.',
+        'in_progress' => 'In Progress',
+        'in_progress_description' => 'The request is being processed by the organization.',
+        'completed' => 'Completed',
+        'completed_description' => 'The request has been fulfilled and the data subject has been notified.',
+        'denied' => 'Denied',
+        'denied_description' => 'The request has been denied with justification provided to the data subject.',
+    ],
+
 ];
