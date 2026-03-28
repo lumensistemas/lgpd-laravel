@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace LumenSistemas\Lgpd\Models;
 
 use Carbon\CarbonImmutable;
+use Illuminate\Database\Eloquent\Attributes\Scope;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -75,6 +77,44 @@ class Consent extends Model
         $model = Config::string('lgpd.models.data_subject', DataSubject::class);
 
         return $this->belongsTo($model);
+    }
+
+    /**
+     * Scope to consents that are currently active (granted, not revoked, not expired).
+     *
+     * @param Builder<self> $query
+     */
+    #[Scope]
+    protected function active(Builder $query): void
+    {
+        $query->whereNull('revoked_at')
+            ->where(function (Builder $q): void {
+                $q->whereNull('expires_at');
+                $q->orWhere('expires_at', '>', now());
+            });
+    }
+
+    /**
+     * Scope to consents that have been revoked.
+     *
+     * @param Builder<self> $query
+     */
+    #[Scope]
+    protected function revoked(Builder $query): void
+    {
+        $query->whereNotNull('revoked_at');
+    }
+
+    /**
+     * Scope to consents that have expired.
+     *
+     * @param Builder<self> $query
+     */
+    #[Scope]
+    protected function expired(Builder $query): void
+    {
+        $query->whereNotNull('expires_at')
+            ->where('expires_at', '<=', now());
     }
 
     /**

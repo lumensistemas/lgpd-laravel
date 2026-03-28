@@ -71,6 +71,11 @@ $consent = Consent::create([
 
 // Revoke consent
 $consent->update(['revoked_at' => now()]);
+
+// Query scopes
+Consent::active()->get();   // granted, not revoked, not expired
+Consent::revoked()->get();  // revoked consents
+Consent::expired()->get();  // past expiry date
 ```
 
 ### Processing Activities Registry (Art. 37)

@@ -149,3 +149,81 @@ it('stores nullable fields as null', function (): void {
     expect($consent->user_agent)->toBeNull();
     expect($consent->metadata)->toBeNull();
 });
+
+it('scopes active consents', function (): void {
+    Consent::create([
+        'data_subject_id' => $this->subject->id,
+        'purpose' => 'Active consent',
+        'legal_basis' => LegalBasis::CONSENT,
+        'granted_at' => now(),
+    ]);
+
+    Consent::create([
+        'data_subject_id' => $this->subject->id,
+        'purpose' => 'Revoked consent',
+        'legal_basis' => LegalBasis::CONSENT,
+        'granted_at' => now(),
+        'revoked_at' => now(),
+    ]);
+
+    Consent::create([
+        'data_subject_id' => $this->subject->id,
+        'purpose' => 'Expired consent',
+        'legal_basis' => LegalBasis::CONSENT,
+        'granted_at' => now(),
+        'expires_at' => now()->subDay(),
+    ]);
+
+    expect(Consent::active()->count())->toBe(1);
+});
+
+it('includes consents with future expiry in active scope', function (): void {
+    Consent::create([
+        'data_subject_id' => $this->subject->id,
+        'purpose' => 'Future expiry',
+        'legal_basis' => LegalBasis::CONSENT,
+        'granted_at' => now(),
+        'expires_at' => now()->addYear(),
+    ]);
+
+    expect(Consent::active()->count())->toBe(1);
+});
+
+it('scopes revoked consents', function (): void {
+    Consent::create([
+        'data_subject_id' => $this->subject->id,
+        'purpose' => 'Active',
+        'legal_basis' => LegalBasis::CONSENT,
+        'granted_at' => now(),
+    ]);
+
+    Consent::create([
+        'data_subject_id' => $this->subject->id,
+        'purpose' => 'Revoked',
+        'legal_basis' => LegalBasis::CONSENT,
+        'granted_at' => now(),
+        'revoked_at' => now(),
+    ]);
+
+    expect(Consent::revoked()->count())->toBe(1);
+});
+
+it('scopes expired consents', function (): void {
+    Consent::create([
+        'data_subject_id' => $this->subject->id,
+        'purpose' => 'Active',
+        'legal_basis' => LegalBasis::CONSENT,
+        'granted_at' => now(),
+        'expires_at' => now()->addYear(),
+    ]);
+
+    Consent::create([
+        'data_subject_id' => $this->subject->id,
+        'purpose' => 'Expired',
+        'legal_basis' => LegalBasis::CONSENT,
+        'granted_at' => now(),
+        'expires_at' => now()->subDay(),
+    ]);
+
+    expect(Consent::expired()->count())->toBe(1);
+});
