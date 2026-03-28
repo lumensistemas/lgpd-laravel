@@ -56,11 +56,6 @@ class DataSubjectRequest extends Model
         'response_notes',
     ];
 
-    /**
-     * Construct a new DataSubjectRequest model instance.
-     *
-     * Initialize the model and set the table name from configuration.
-     */
     public function __construct(array $attributes = [])
     {
         parent::__construct($attributes);

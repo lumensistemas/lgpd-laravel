@@ -26,18 +26,19 @@ enum DataSensitivity: string
      */
     public static function highest(array $levels): self
     {
-        $ordered = self::cases();
+        $cases = self::cases();
+        $order = array_flip(array_map(fn (self $case): string => $case->value, $cases));
         $max = 0;
 
         foreach ($levels as $level) {
-            $index = array_search($level, $ordered, true);
+            $index = $order[$level->value] ?? 0;
 
-            if (is_int($index) && $index > $max) {
+            if ($index > $max) {
                 $max = $index;
             }
         }
 
-        return $ordered[$max];
+        return $cases[$max];
     }
 
     /**
@@ -53,6 +54,6 @@ enum DataSensitivity: string
      */
     public function description(): string
     {
-        return trans_string(sprintf('lgpd::enums.data_sensitivity.%s_description', $this->value));
+        return trans_string('lgpd::enums.data_sensitivity.'.$this->value.'_description');
     }
 }

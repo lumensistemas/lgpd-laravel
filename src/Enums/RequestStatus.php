@@ -32,6 +32,6 @@ enum RequestStatus: string
      */
     public function description(): string
     {
-        return trans_string(sprintf('lgpd::enums.request_status.%s_description', $this->value));
+        return trans_string('lgpd::enums.request_status.'.$this->value.'_description');
     }
 }

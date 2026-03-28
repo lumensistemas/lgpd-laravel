@@ -117,6 +117,18 @@ it('stores nullable fields as null', function (): void {
     expect($activity->retention_period)->toBeNull();
 });
 
-it('does not use soft deletes', function (): void {
-    expect(in_array(Illuminate\Database\Eloquent\SoftDeletes::class, class_uses_recursive(ProcessingActivity::class)))->toBeFalse();
+it('supports soft deletes', function (): void {
+    $activity = ProcessingActivity::create([
+        'activity' => 'user_registration',
+        'legal_basis' => LegalBasis::CONTRACT,
+        'sensitivity' => DataSensitivity::PERSONAL,
+        'purpose' => 'Create account',
+        'processed_at' => now(),
+    ]);
+
+    $activity->delete();
+
+    expect(ProcessingActivity::count())->toBe(0);
+    expect(ProcessingActivity::withTrashed()->count())->toBe(1);
+    expect($activity->trashed())->toBeTrue();
 });

@@ -37,6 +37,6 @@ enum DataSubjectRight: string
      */
     public function description(): string
     {
-        return trans_string(sprintf('lgpd::enums.data_subject_right.%s_description', $this->value));
+        return trans_string('lgpd::enums.data_subject_right.'.$this->value.'_description');
     }
 }

@@ -7,6 +7,7 @@ namespace LumenSistemas\Lgpd\Models;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Config;
 use LumenSistemas\Lgpd\Enums\DataSensitivity;
 use LumenSistemas\Lgpd\Enums\LegalBasis;
@@ -34,6 +35,7 @@ use Override;
 class ProcessingActivity extends Model
 {
     use HasUuids;
+    use SoftDeletes;
 
     /** @var list<string> */
     protected $fillable = [
@@ -46,16 +48,11 @@ class ProcessingActivity extends Model
         'processed_at',
     ];
 
-    /**
-     * Construct a new ProcessingActivity model instance.
-     *
-     * Initialize the model and set the table name from configuration.
-     */
     public function __construct(array $attributes = [])
     {
         parent::__construct($attributes);
 
-        $this->table = strval(Config::string('lgpd.tables.processing_activities', 'processing_activities'));
+        $this->table = Config::string('lgpd.tables.processing_activities', 'processing_activities');
     }
 
     /**

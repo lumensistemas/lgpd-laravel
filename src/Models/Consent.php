@@ -61,11 +61,6 @@ class Consent extends Model
         'metadata',
     ];
 
-    /**
-     * Construct a new Consent model instance.
-     *
-     * Initialize the model and set the table name from configuration.
-     */
     public function __construct(array $attributes = [])
     {
         parent::__construct($attributes);

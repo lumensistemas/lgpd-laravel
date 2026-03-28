@@ -38,6 +38,6 @@ enum LegalBasis: string
      */
     public function description(): string
     {
-        return trans_string(sprintf('lgpd::enums.legal_basis.%s_description', $this->value));
+        return trans_string('lgpd::enums.legal_basis.'.$this->value.'_description');
     }
 }
