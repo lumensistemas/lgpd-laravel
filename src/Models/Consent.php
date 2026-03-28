@@ -13,6 +13,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Config;
 use LumenSistemas\Lgpd\Enums\LegalBasis;
+use LumenSistemas\Lgpd\Events\ConsentGranted;
+use LumenSistemas\Lgpd\Events\ConsentRevoked;
 use Override;
 
 /**
@@ -40,6 +42,11 @@ class Consent extends Model
 {
     use HasUuids;
     use SoftDeletes;
+
+    /** @var array<string, class-string> */
+    protected $dispatchesEvents = [
+        'created' => ConsentGranted::class,
+    ];
 
     /** @var list<string> */
     protected $fillable = [
@@ -77,6 +84,16 @@ class Consent extends Model
         $model = Config::string('lgpd.models.data_subject', DataSubject::class);
 
         return $this->belongsTo($model);
+    }
+
+    #[Override]
+    protected static function booted(): void
+    {
+        static::updated(function (self $consent): void {
+            if ($consent->revoked_at !== null && $consent->wasChanged('revoked_at')) {
+                ConsentRevoked::dispatch($consent);
+            }
+        });
     }
 
     /**

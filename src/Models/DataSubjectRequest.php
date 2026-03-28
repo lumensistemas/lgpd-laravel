@@ -14,6 +14,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Config;
 use LumenSistemas\Lgpd\Enums\DataSubjectRight;
 use LumenSistemas\Lgpd\Enums\RequestStatus;
+use LumenSistemas\Lgpd\Events\DataSubjectRequestCompleted;
+use LumenSistemas\Lgpd\Events\DataSubjectRequestCreated;
 use Override;
 
 /**
@@ -38,6 +40,11 @@ class DataSubjectRequest extends Model
 {
     use HasUuids;
     use SoftDeletes;
+
+    /** @var array<string, class-string> */
+    protected $dispatchesEvents = [
+        'created' => DataSubjectRequestCreated::class,
+    ];
 
     /** @var list<string> */
     protected $fillable = [
@@ -72,6 +79,16 @@ class DataSubjectRequest extends Model
         $model = Config::string('lgpd.models.data_subject', DataSubject::class);
 
         return $this->belongsTo($model);
+    }
+
+    #[Override]
+    protected static function booted(): void
+    {
+        static::updated(function (self $request): void {
+            if ($request->wasChanged('status') && in_array($request->status, [RequestStatus::COMPLETED, RequestStatus::DENIED], true)) {
+                DataSubjectRequestCompleted::dispatch($request);
+            }
+        });
     }
 
     /**
